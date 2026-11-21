@@ -1,21 +1,21 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 name: Build
 run-name: >-
-  ${{ github.event_name == 'workflow_dispatch' && format('action:{0}:pool:{1}', inputs.action_tag, inputs.runner_pool_tag) || format('action:build:pool:private') }}
+  ${{ github.event_name == 'workflow_dispatch' && format('action:{0}:pool:{1}', inputs.action_tag, inputs.runner_pool_tag) || 'action:build:pool:public' }}
 
 on:
   workflow_dispatch:
     inputs:
       action_tag:
-        description: Required private JIT action tag
+        description: Required action tag
         required: true
         type: choice
         options: [build]
       runner_pool_tag:
-        description: Required private JIT runner pool tag
+        description: Required hosted runner pool tag
         required: true
         type: choice
-        options: [private]
+        options: [public]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
@@ -26,6 +26,6 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' &&
-      inputs.action_tag == 'build' && inputs.runner_pool_tag == 'private'
+      inputs.action_tag == 'build' && inputs.runner_pool_tag == 'public'
     uses: ./.github/workflows/private-startos-build.yml
     # This build-only dispatch does not publish, so no signing key is required.

@@ -1,4 +1,4 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 name: Tag and Release
 
 on:

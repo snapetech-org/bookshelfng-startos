@@ -1,6 +1,6 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 # Adapted from Start9Labs/start-technologies at c5cc5f89eed22b67f522c03ae3ebec029dea9669.
-# Runner selection is maintained locally to enforce private JIT only.
+# Runners: compatible GitHub-hosted labels (ng-runner-policy hosted-compatible-v1).
 name: Tag and Release
 
 on:
@@ -37,7 +37,7 @@ on:
 
 jobs:
   Tag:
-    runs-on: ${{ fromJSON(format('{{"group":"ng-shared-main-jit","labels":["self-hosted","linux","x64","ng-shared-main-bookshelfng-startos","ng-main-run-{0}","gha-{0}-tag"]}}', github.run_id)) }}
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:

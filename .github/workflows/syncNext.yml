@@ -1,4 +1,4 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 name: Sync next
 run-name: >-
   ${{ format('action:{0}:pool:{1}', inputs.action_tag, inputs.runner_pool_tag) }}
@@ -9,22 +9,22 @@ on:
   workflow_dispatch:
     inputs:
       action_tag:
-        description: Required private JIT action tag
+        description: Required action tag
         required: true
         type: choice
         options: [sync]
       runner_pool_tag:
-        description: Required private JIT runner pool tag
+        description: Required hosted runner pool tag
         required: true
         type: choice
-        options: [private]
+        options: [public]
 
 jobs:
   sync:
     if: >-
       github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' &&
-      inputs.action_tag == 'sync' && inputs.runner_pool_tag == 'private'
+      inputs.action_tag == 'sync' && inputs.runner_pool_tag == 'public'
     uses: ./.github/workflows/private-startos-syncNext.yml
     permissions:
       contents: write

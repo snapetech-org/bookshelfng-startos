@@ -1,4 +1,4 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 name: Release
 run-name: >-
   ${{ format('action:{0}:pool:{1}:tag:{2}', inputs.action_tag, inputs.runner_pool_tag, inputs.release_tag) }}
@@ -7,14 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       action_tag:
-        description: Required private JIT release action tag
+        description: Required release action tag
         type: choice
         options: [release]
         required: true
       runner_pool_tag:
-        description: Required private JIT runner pool tag
+        description: Required hosted runner pool tag
         type: choice
-        options: [private]
+        options: [public]
         required: true
       release_tag:
         description: Existing v* tag on the default branch to build and publish
@@ -30,7 +30,7 @@ jobs:
       github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' &&
       inputs.action_tag == 'release' &&
-      inputs.runner_pool_tag == 'private' &&
+      inputs.runner_pool_tag == 'public' &&
       inputs.release_tag != ''
     uses: ./.github/workflows/tagAndRelease.yml
     with:

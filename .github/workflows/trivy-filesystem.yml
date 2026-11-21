@@ -1,4 +1,4 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 name: Trivy filesystem scan
 
 run-name: ${{ format('action:{0}:pool:{1}', inputs.action_tag, inputs.runner_pool_tag) }}
@@ -8,16 +8,16 @@ on:
 
     inputs:
       action_tag:
-        description: Required private JIT scan action tag
+        description: Required scan action tag
         required: true
         type: choice
         options:
           - scan
       runner_pool_tag:
-        description: Required private JIT runner pool tag
+        description: Required hosted runner pool tag
         required: true
         type: choice
-        options: [private]
+        options: [public]
 permissions:
   contents: read
 
@@ -29,8 +29,8 @@ jobs:
   trivy:
     name: Trivy source, dependency, and configuration scan
     if: >-
-      github.event_name == 'workflow_dispatch' && inputs.action_tag == 'scan' && inputs.runner_pool_tag == 'private' && github.ref == 'refs/heads/main'
-    runs-on: ${{ fromJSON(format('{{"group":"ng-shared-main-jit","labels":["self-hosted","linux","x64","ng-shared-main-bookshelfng-startos","ng-main-run-{0}","gha-{0}-trivy"]}}', github.run_id)) }}
+      github.event_name == 'workflow_dispatch' && inputs.action_tag == 'scan' && inputs.runner_pool_tag == 'public' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - name: Checkout

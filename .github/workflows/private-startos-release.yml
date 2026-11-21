@@ -1,6 +1,6 @@
-# ng-runner-policy: private-jit-only-v1
+# ng-runner-policy: hosted-compatible-v1
 # Adapted from Start9Labs/start-technologies at c5cc5f89eed22b67f522c03ae3ebec029dea9669.
-# Runner selection is maintained locally to enforce private JIT only.
+# Runners: compatible GitHub-hosted labels (ng-runner-policy hosted-compatible-v1).
 name: Release
 
 on:
@@ -43,7 +43,7 @@ jobs:
   # that runs plain `make` on one runner — same wall time as the legacy
   # single-job build, plus a small artifact handoff cost.
   DiscoverMatrix:
-    runs-on: ${{ fromJSON(format('{{"group":"ng-shared-main-jit","labels":["self-hosted","linux","x64","ng-shared-main-bookshelfng-startos","ng-main-run-{0}","gha-{0}-discovermatrix"]}}', github.run_id)) }}
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.discover.outputs.matrix }}
     steps:
@@ -103,11 +103,11 @@ jobs:
   # internally sets VARIANT and dispatches to its arches).
   BuildMatrix:
     needs: DiscoverMatrix
-    # arm targets build natively on the private Linux ARM64 JIT runner — both the bare arch
+    # arm targets build natively on the hosted Linux ARM64 runner — both the bare arch
     # (`arm`) and per-variant leaves (`<variant>-arm`, e.g. generic-arm). x86 and
     # riscv targets stay on x86 (riscv still emulates under QEMU). Empty target
     # (fallback path) -> x86.
-    runs-on: ${{ (matrix.target == 'arm' || matrix.target == 'arm64' || matrix.target == 'aarch64' || endsWith(matrix.target, '-arm') || endsWith(matrix.target, '-arm64') || endsWith(matrix.target, '-aarch64')) && fromJSON(format('{{"group":"ng-shared-main-jit","labels":["self-hosted","linux","arm64","ng-shared-main-bookshelfng-startos","ng-main-run-{0}","gha-{0}-{1}-buildmatrix"]}}', github.run_id, strategy.job-index)) || fromJSON(format('{{"group":"ng-shared-main-jit","labels":["self-hosted","linux","x64","ng-shared-main-bookshelfng-startos","ng-main-run-{0}","gha-{0}-{1}-buildmatrix"]}}', github.run_id, strategy.job-index)) }}
+    runs-on: ${{ (matrix.target == 'arm' || matrix.target == 'arm64' || matrix.target == 'aarch64' || endsWith(matrix.target, '-arm') || endsWith(matrix.target, '-arm64') || endsWith(matrix.target, '-aarch64')) && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       contents: read
     strategy:
@@ -170,7 +170,7 @@ jobs:
 
   Publish:
     needs: BuildMatrix
-    runs-on: ${{ fromJSON(format('{{"group":"ng-shared-main-jit","labels":["self-hosted","linux","x64","ng-shared-main-bookshelfng-startos","ng-main-run-{0}","gha-{0}-publish"]}}', github.run_id)) }}
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
